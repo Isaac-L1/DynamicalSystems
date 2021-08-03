@@ -1,0 +1,17 @@
+
+    STEP   DAMPING               NORMS              COMPUTATION TIMES
+  IT SIT     GAMMA     ||d||     ||f||     ||U||   F(x)  DF(x)  SOLVE
+   0                               NaN  2.24e+00    0.0    0.0    0.0
+   1   4  1.25e-01       NaN       NaN       NaN    0.0    0.0    0.0
+   2   4  1.25e-01       NaN       NaN       NaN    0.0    0.0    0.0
+   3   4  1.25e-01       NaN       NaN       NaN    0.0    0.0    0.0
+   4   4  1.25e-01       NaN       NaN       NaN    0.0    0.0    0.0
+   5   4  1.25e-01       NaN       NaN       NaN    0.0    0.0    0.0
+   6   4  1.25e-01       NaN       NaN       NaN    0.0    0.0    0.0
+   7   4  1.25e-01       NaN       NaN       NaN    0.0    0.0    0.0
+   8   4  1.25e-01       NaN       NaN       NaN    0.0    0.0    0.0
+   9   4  1.25e-01       NaN       NaN       NaN    0.0    0.0    0.0
+  10   4  1.25e-01       NaN       NaN       NaN    0.0    0.0    0.0
+
+ STEP      TIME        ||U||  LABEL  TYPE            nu         beta
+   -1  00:00:00   2.2360e+00      1  MX             ---          ---

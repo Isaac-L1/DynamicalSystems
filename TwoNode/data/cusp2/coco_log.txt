@@ -1,0 +1,74 @@
+MATLAB version 9.10.0.1684407 (R2021a) Update 3 on architecture win64
+
+run: { runid='cusp2' toolbox='empty' tbxctor=@empty_ctor isol_type='' sol_type='' dir='C:\Users\Isaac\OneDrive\Documents\MATLAB\Summer\TwoNodeBi\data\cusp2' bdfname='C:\Users\Isaac\OneDrive\Documents\MATLAB\Summer\TwoNodeBi\data\cusp2\bd.mat' logname='C:\Users\Isaac\OneDrive\Documents\MATLAB\Summer\TwoNodeBi\data\cusp2\coco_log.txt' scrname='C:\Users\Isaac\OneDrive\Documents\MATLAB\Summer\TwoNodeBi\data\cusp2\coco_scr.txt' }
+
+all: { TOL=1e-06 CleanData=false LogLevel=1 data_dir='C:\Users\Isaac\OneDrive\Documents\MATLAB\Summer\TwoNodeBi\data' }
+  +-ode: { vectorized=false }
+  +-lsol: { det=true }
+
+funcs
+  +-ep: { type='zero' }
+  | +-pars: { type='inactive' pars={ 'nu' 'beta' } }
+  | +-var: { type='zero' }
+  | +-HB: { type='zero' }
+  | +-test: { type='regular' pars={ 'ep.test.BTP' } }
+  +-hb_glue: { type='zero' }
+  +-cseg
+  | +-prcond: { type='zero' }
+  +-atlas
+    +-test
+      +-BP: { type='singular' pars={ 'atlas.test.BP' } }
+      +-FP: { type='singular' pars={ 'atlas.test.FP' } }
+
+slots
+  +-ep: { signals={ 'bddat@bddat' 'save_full@coco_save_data' } }
+  | +-HB: { signal='update@update' }
+  +-cseg
+  | +-fix_mfunc: { signal='fix_mfunc@CurveSegmentBase.fix_mfunc' }
+  | +-remesh: { signal='remesh@CurveSegmentBase.remesh' }
+  | +-set_mode: { signal='set_mode@CurveSegmentBase.set_mode' }
+  | +-update: { signal='update@CurveSegmentBase.update' }
+  | +-update_h: { signal='update_h@CurveSegmentBase.update_h' }
+  | +-update_w: { signal='update_w@CurveSegmentBase.update_w' }
+  +-tb_info: { signals={ 'save_bd@coco_save_data' 'save_reduced@coco_save_data' } }
+  +-run: { signal='save_bd@save_run' }
+  +-bd: { signal='save_bd@save_bd' }
+  +-bddat: { signal='save_bd@save_bddat' }
+  +-lsol
+    +-det: { signal='set_mode@set_save_det' }
+
+signals
+  +-save_bd: { owner='coco' slots={ 'tb_info@coco_save_data' 'run@save_run' 'bd@save_bd' 'bddat@save_bddat' } }
+  +-update: { owner='CurveSegmentBase' slots={ 'ep.HB@update' 'cseg.update@CurveSegmentBase.update' } }
+  +-set_mode: { owner='CurveSegmentBase' slots={ 'cseg.set_mode@CurveSegmentBase.set_mode' 'lsol.det@set_save_det' } }
+  +-update_h: { owner='CurveSegmentBase' slots={ 'cseg.update_h@CurveSegmentBase.update_h' } }
+  +-fix_mfunc: { owner='CurveSegmentBase' slots={ 'cseg.fix_mfunc@CurveSegmentBase.fix_mfunc' } }
+  +-remesh: { owner='atlas_1d' slots={ 'cseg.remesh@CurveSegmentBase.remesh' } }
+  +-bddat: { owner='AtlasBase' slots={ 'ep@bddat' } }
+  +-save_full: { owner='AtlasBase' slots={ 'ep@coco_save_data' } }
+  +-save_reduced: { owner='AtlasBase' slots={ 'tb_info@coco_save_data' } }
+
+*********************************************************************
+
+    STEP   DAMPING               NORMS              COMPUTATION TIMES
+  IT SIT     GAMMA     ||d||     ||f||     ||U||   F(x)  DF(x)  SOLVE
+   0                               NaN  2.24e+00    0.0    0.0    0.0
+   1   4  1.25e-01       NaN       NaN       NaN    0.0    0.0    0.0
+   2   4  1.25e-01       NaN       NaN       NaN    0.0    0.0    0.0
+   3   4  1.25e-01       NaN       NaN       NaN    0.0    0.0    0.0
+   4   4  1.25e-01       NaN       NaN       NaN    0.0    0.0    0.0
+   5   4  1.25e-01       NaN       NaN       NaN    0.0    0.0    0.0
+   6   4  1.25e-01       NaN       NaN       NaN    0.0    0.0    0.0
+   7   4  1.25e-01       NaN       NaN       NaN    0.0    0.0    0.0
+   8   4  1.25e-01       NaN       NaN       NaN    0.0    0.0    0.0
+   9   4  1.25e-01       NaN       NaN       NaN    0.0    0.0    0.0
+  10   4  1.25e-01       NaN       NaN       NaN    0.0    0.0    0.0
+
+warning: state_co_correct: correction failed
+no convergence of Newton's method within 10 iterations
+
+ STEP   STEP SIZE      TIME        ||U||  LABEL  TYPE            nu         beta
+   -1    0.00e+00  00:00:00   2.2360e+00      1  MX             ---          ---
+
+POINT -1: computation finished
+*********************************************************************
