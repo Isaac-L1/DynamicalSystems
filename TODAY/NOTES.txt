@@ -1,0 +1,10 @@
+-----
+NOTES
+-----
+
+Progress:
+- Reran the escape times height/distance
+    - Results that make more sense.
+    - Distance still has an effect.
+    - The effect is independent - chi-squared
+- 
