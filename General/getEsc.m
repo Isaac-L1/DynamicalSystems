@@ -1,4 +1,4 @@
-function [Ex, xr] = getEsc(N, nus, betas, h, alpha, x0, kmax, thresh)
+function [Exn] = getEsc(N, nus, betas, h, alpha, x0, kmax, thresh)
 %getEsc - A function which returns an escape time for the parameters
 %passed in. 
 % Parameters are: 
@@ -30,63 +30,49 @@ function [Ex, xr] = getEsc(N, nus, betas, h, alpha, x0, kmax, thresh)
     Ex = zeros(N, 1);
     Exn = zeros(N, kmax);
     B = sum(betas, 2);
+    sh = sqrt(h);
     
-    rng(1)
+    
     %Iterate through number of realisations.
     for kn = 1:kmax
-        tic
+        nums = randn(N, 1000000);
+        
         %Set up vectors.
-        T = 100;
-        x = zeros(N, T/h);
-        x(:, 1) = x0;
         tx = 0;
         n = 1;
-        xesc = zeros(1, N);
+        xesc = zeros(N, 1);
+        xn = x0;
         
         %Start taking time steps
-        while 1
-            
-            xn = x(:, n);
+        while any(xesc == 0)
+            if 2*n > length(nums)
+                nums = randn(N, 1000000);
+                n = 1;
+            end
         
             %Find the k1 vector
             k1 = -(xn - 1).*(xn.^2 - nus) + betas*xn - B.*xn;
 
             %Incorporate noise
-            xm = xn + h*k1 + alpha*sqrt(h)*randn(N, 1);
+            xm = xn + h*k1 + alpha*sh*nums(:,2*n-1);
 
             %Find the k2 vector
             k2 = -(xm - 1).*(xm.^2 - nus) + betas*xm - B.*xm;
 
             %Step forward plus noise
-            x(:, n+1) = xn + (h/2)*(k1+k2) + alpha*sqrt(h)*randn(N, 1);
+            xn = xn + (h/2)*(k1+k2) + alpha*sh*nums(:, 2*n);
 
             %Step forward time and step number
             tx = tx + h;
             n = n + 1;
             
             %Check which nodes have escaped
-%             xesc = floor(x(:, n)./thresh);
-%             Exn(:, kn) = tx.*xesc;
-            for i = 1:N
-                if (x(i, n) > thresh) && xesc(i) == 0
-                    xesc(i) = 1;
-                    Exn(kn, i) = tx;
-                end
-            end
-            
-            %If all nodes have escaped then exit for loop
-            if all(xesc == 1)
-                break
-            end
+            ind = (xn > thresh) & (xesc==0);
+            xesc(ind) = 1;
+            Exn(ind, kn) = tx;
             
         end
-        xr = x;
-        toc
-    end
-    
-    %Take average escape time across all realisations for each node
-    for i = 1:N
-        Ex(i) = mean(Exn(:, i));
+        
     end
 
 end
