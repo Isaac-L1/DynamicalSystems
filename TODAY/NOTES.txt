@@ -7,4 +7,11 @@ Progress:
     - Results that make more sense.
     - Distance still has an effect.
     - The effect is independent - chi-squared
-- 
+- Mathematica vector field
+    - Equilibria not as strange as we thought
+    - Doesn't cross a saddle but crosses a saddle manifold
+- Sims+eqs for dn=0.005 and dn=0.0001
+- Function to get coco to calculate the equilibrium points
+
+- Plot mean + domino escapes
+- indicate probability for each escape

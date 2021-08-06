@@ -29,7 +29,6 @@ for j = dns
         prob = coco_set(prob, 'cont', 'PtMX', 1000, 'h_max', 0.01, 'h_min', 0.00001);
         ode_args = {@bistuni, x0, pnames, p0};
         cont_args = {1, 'beta', [0 0.8]}; %We want to continue beta and leave nu inactive
-        prob = coco_add_event(prob, 'EQ', 'beta', 0.3);
 
         bd1 = coco(prob, 'test2d', @ode_isol2ep, ode_args{:}, cont_args{:}); %Run the continuation
 
