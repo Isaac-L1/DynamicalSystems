@@ -2,11 +2,11 @@ betas = [0, 0.1; 0, 0];
 alpha = 0.03;
 N = 2;
 h = 1e-3;
-kmax = 1000;
+kmax = 10000;
 thresh = 0.8;
 meanNu = 0.0001;
-dN1 = 0.007;
-dN2 = 0.006;
+dN1 = 0.01;
+dN2 = 0.004;
 err3 = 1;
 firstRun = true;
 secondRun = true;
@@ -23,7 +23,7 @@ while abs(err3) > 0.005
     nus = [meanNu; meanNu + deltaNu];
     x0 = [-sqrt(nus(1)); -sqrt(nus(2))];
 
-    Exn = getEsc2(N, nus, betas, h, alpha, x0, kmax, thresh, 128);
+    Exn = getEsc(N, nus, betas, h, alpha, x0, kmax, thresh);
     
     Emin = min(Exn);
     P = sum(Exn(2, :) == Emin)/kmax;

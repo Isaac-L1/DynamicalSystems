@@ -14,7 +14,6 @@ for be = betas
     beta = be;
     np = 500;
     kmax = 500;
-    figure; hold on;
     alpha = 0.03;
     nu1 = 0.006;
     deltanu = 0.0001;
@@ -29,6 +28,20 @@ for be = betas
 %     if ~exist('roots', 'var')
         roots = cocoEqs(@bistuni, 'beta', [0 0.8], beta, EQ, {'nu1','deltanu','beta'}, [nu1 deltanu 0]);
 %     end
+
+    x = linspace(-0.3, 1.2, 20);
+    y = linspace(-0.3, 1.2, 20);
+    u = zeros(length(x), length(y));
+    v = zeros(length(x), length(y));
+
+    for i = 1:length(x)
+        for j = 1:length(y)
+            u(i,j) = -(x(i) - 1).*(x(i).^2 - nu1) + beta*(y(j) - x(i));
+            v(i,j) = -(y(j) - 1).*(y(j).^2 - nu2);
+        end
+    end
+    
+    quiver(x, y, u.',v.');
 
     for j = 1:kmax %Find kmax realisations with escape times.
 
@@ -94,10 +107,16 @@ for be = betas
                 scatter(roots(1, i), roots(2, i), 'd', 'k');
         end
     end
-
+    
+    title(['\beta = ' num2str(be)]);
+    xlabel('X1');
+    ylabel('X2');
     pln = pln + 1;
     
 end
+
+title(pl, 'Most likely paths by \beta for \delta \nu = 0.0001');
+
 
 %%
 
