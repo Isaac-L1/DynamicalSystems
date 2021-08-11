@@ -2,7 +2,7 @@ alpha = 0.1;
 
 distances = linspace(0.02, 0.2, 20);
 heights = linspace(1e-3, 2e-2, 40);
-kmax = 1000;
+kmax = 5000;
 escapes = zeros(length(distances), length(heights), kmax);
 meanEscapes = zeros(length(distances), length(heights));
 h = 1e-3;
@@ -20,7 +20,7 @@ for di = 1:length(distances)
         A = (6*H)/(D^3);
         thresh = sqrt(nu);
         
-        for j = 1:kmax %Find kmax realisations with escape times.
+        parfor j = 1:kmax %Find kmax realisations with escape times.
             x0 = -sqrt(nu); %Initial conditions
             tx = 0;
             n = 1;
@@ -62,6 +62,8 @@ surf(heights, distances, meanEscapes, 'edgecolor', 'none');
 xlabel('Heights');
 ylabel('Distances');
 zlabel('E( \tau )');
+% set(gca, 'xscale', 'log');
+set(gca, 'yscale', 'log');
 set(gca, 'zscale', 'log');
 
 %% Chi-Square

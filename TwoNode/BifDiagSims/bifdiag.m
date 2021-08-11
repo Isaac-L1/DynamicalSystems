@@ -146,11 +146,11 @@ ylabel('E(\tau)');
 pln = pln + 1;
 
 %%
-load('simdata2.mat');
-EDS = zeros(2, 6);
-betas = [0.003 0.08 0.15 0.17 0.25 0.4];
+load('simdata12.mat');
+EDS = zeros(2, 20);
+betas = linspace(0,0.4,20);
 
-for j = 1:6
+for j = 1:20
     Exn = Exns(:,:,j);
 
     X1 = Exn(1,:);

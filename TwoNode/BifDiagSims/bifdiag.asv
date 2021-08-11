@@ -33,10 +33,10 @@ for i = 1:9 % Run a continuation for each of the equilibrium points and plot on 
     grid on
 end
 plot(zeros(1,12)+0.003, -0.1:0.1:1, 'color', [0 0 0 0.5]);
-plot(zeros(1,12)+0.03, -0.1:0.1:1, [0 0 0 0.5]);
-plot(zeros(1,12)+0.1, -0.1:0.1:1, [0 0 0 0.5]);
-plot(zeros(1,12)+0.25, -0.1:0.1:1, 'k');
-plot(zeros(1,12)+0.3, -0.1:0.1:1, 'k');
+plot(zeros(1,12)+0.03, -0.1:0.1:1, 'color', [0 0 0 0.5]);
+plot(zeros(1,12)+0.1, -0.1:0.1:1, 'color', [0 0 0 0.5]);
+plot(zeros(1,12)+0.25, -0.1:0.1:1, 'color', [0 0 0 0.5]);
+plot(zeros(1,12)+0.3, -0.1:0.1:1, 'color', [0 0 0 0.5]);
 title(['Bifurcation Diagram for \delta \nu = ' num2str(deltanu)]);
 xlabel('\beta');
 pln = pln + 1;
@@ -70,12 +70,12 @@ for i = 1:9 % Run a continuation for each of the equilibrium points and plot on 
     coco_plot_bd(thm, 'test2d', 'beta', 'x'); %We continued beta so we need to plot beta against x
     grid on
 end
-plot(zeros(1,12)+0.003, -0.1:0.1:1, 'k');
-plot(zeros(1,12)+0.08, -0.1:0.1:1, 'k');
-plot(zeros(1,12)+0.15, -0.1:0.1:1, 'k');
-plot(zeros(1,12)+0.17, -0.1:0.1:1, 'k');
-plot(zeros(1,12)+0.25, -0.1:0.1:1, 'k');
-plot(zeros(1,12)+0.4, -0.1:0.1:1, 'k');
+plot(zeros(1,12)+0.003, -0.1:0.1:1, 'color', [0 0 0 0.5]);
+plot(zeros(1,12)+0.08, -0.1:0.1:1, 'color', [0 0 0 0.5]);
+plot(zeros(1,12)+0.15, -0.1:0.1:1, 'color', [0 0 0 0.5]);
+plot(zeros(1,12)+0.17, -0.1:0.1:1, 'color', [0 0 0 0.5]);
+plot(zeros(1,12)+0.25, -0.1:0.1:1, 'color', [0 0 0 0.5]);
+plot(zeros(1,12)+0.4, -0.1:0.1:1, 'color', [0 0 0 0.5]);
 title(['Bifurcation Diagram for \delta \nu = ' num2str(deltanu)]);
 xlabel('\beta');
 pln = pln + 1;
@@ -146,11 +146,11 @@ ylabel('E(\tau)');
 pln = pln + 1;
 
 %%
-load('simdata2.mat');
-EDS = zeros(2, 6);
-betas = [0.003 0.08 0.15 0.17 0.25 0.4];
+load('simdata12.mat');
+EDS = zeros(2, 20);
+betas = linspace(0,0.4,20);
 
-for j = 1:6
+for j = 1:length(Exns)
     Exn = Exns(:,:,j);
 
     X1 = Exn(1,:);

@@ -15,3 +15,8 @@ Progress:
 
 - Plot mean + domino escapes
 - indicate probability for each escape
+
+- Pick beta = 0.1
+- bifurcatoin diagram for delta nu
+- Check the regimes against simulation
+- delta nu bifurcations
