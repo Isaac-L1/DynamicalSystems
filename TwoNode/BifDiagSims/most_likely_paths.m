@@ -4,7 +4,7 @@
 pl = tiledlayout(2, 3);
 pln = 1;
 dns = [0 1e-5 1e-4 1e-3 5e-3 1e-2 2e-2 0.1];
-betas = [0.003 0.08 0.15 0.17 0.25 0.4];
+betas = [0.003 0.03 0.1 0.25 0.3 0.5];
 
 for be = betas
 
@@ -16,7 +16,7 @@ for be = betas
     kmax = 500;
     alpha = 0.03;
     nu1 = 0.006;
-    deltanu = 0.0001;
+    deltanu = 0.005;
     nu2 = nu1 + deltanu;
     sq1 = sqrt(nu1);
     sq2 = sqrt(nu2);
@@ -26,7 +26,7 @@ for be = betas
       
     nexttile; hold on;
 %     if ~exist('roots', 'var')
-        roots = cocoEqs(@bistuni, 'beta', [0 0.8], beta, EQ, {'nu1','deltanu','beta'}, [nu1 deltanu 0]);
+        roots = cocoEqs(@bistbi, 'beta', [0 0.8], beta, EQ, {'nu1','deltanu','beta'}, [nu1 deltanu 0]);
 %     end
 
     x = linspace(-0.3, 1.2, 20);
@@ -37,7 +37,7 @@ for be = betas
     for i = 1:length(x)
         for j = 1:length(y)
             u(i,j) = -(x(i) - 1).*(x(i).^2 - nu1) + beta*(y(j) - x(i));
-            v(i,j) = -(y(j) - 1).*(y(j).^2 - nu2);
+            v(i,j) = -(y(j) - 1).*(y(j).^2 - nu2) + beta*(x(i) - y(j));
         end
     end
     
@@ -68,14 +68,14 @@ for be = betas
 
             %Evaluate deterministic part using Heun's scheme.
             kx1 = -(x(n)^2 - nu1)*(x(n) - 1) + beta*(y(n)-x(n));
-            ky1 = -(y(n)^2 - nu2)*(y(n) - 1);
+            ky1 = -(y(n)^2 - nu2)*(y(n) - 1) + beta*(x(n) - y(n));
 
             %Apply noise
             hkx1 = x(n) + h*kx1 + alpha*nums(1, n)*sqrt(h);
             hky1 = y(n) + h*ky1 + alpha*nums(2, n)*sqrt(h);
 
             kx2 = -(hkx1^2 - nu1)*(hkx1 - 1) + beta*(hky1-hkx1);
-            ky2 = -(hky1^2 - nu2)*(hky1 - 1);
+            ky2 = -(hky1^2 - nu2)*(hky1 - 1) + beta*(hkx1 - hky1);
 
             %Apply heun scheme and noise.
             x(n+1) = x(n) + (h/2)*(kx1+kx2) + alpha*nums(3, n)*sqrt(h);
@@ -115,7 +115,7 @@ for be = betas
     
 end
 
-title(pl, 'Most likely paths by \beta for \delta \nu = 0.0001');
+title(pl, 'Most likely paths by \beta for \delta \nu = 0.005');
 
 
 %%
@@ -132,5 +132,20 @@ x2 = x(2,:);
 
 f = [(-(x1 - 1.0).*(x1.^2 - nu1) + beta.*(x2-x1));
     (-(x2 - 1.0).*(x2.^2 - nu2))];
+
+end
+
+function f = bistbi(x, p)
+
+nu1 = p(1,:);
+nu2 = nu1 + p(2,:);
+beta = p(3,:);
+
+
+x1 = x(1,:);
+x2 = x(2,:);
+
+f = [(-(x1 - 1.0).*(x1.^2 - nu1) + beta.*(x2-x1));
+    (-(x2 - 1.0).*(x2.^2 - nu2) + beta.*(x1-x2))];
 
 end

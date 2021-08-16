@@ -7,6 +7,7 @@ escapes = zeros(length(distances), length(heights), kmax);
 meanEscapes = zeros(length(distances), length(heights));
 h = 1e-3;
 
+%%
 tic
 for di = 1:length(distances)
     
@@ -57,14 +58,45 @@ toc
 
 %%
 
-figure(4);
+expEsc = zeros(length(distances), length(heights));
+for i = 1:length(distances)
+    for j = 1:length(heights)
+        D = distances(i);
+        H = heights(j);
+        nu = D^2 / 4;
+        A = (6*H) / D^3;
+        expEsc(i, j) = pi / (A*sqrt(nu*(1-nu))) * exp((8*A*nu^(3/2)) / (3 * alpha^2));
+    end
+end
+
+%%
+
+exps = expEsc(:,21:40);
+means = meanEscapes(:,21:40);
+pref = sum(sum(means))/sum(sum(exps));
+
+%%
+
+figure(4); hold on;
 surf(heights, distances, meanEscapes, 'edgecolor', 'none');
+surf(heights, distances, expEsc, 'edgecolor', 'none');
 xlabel('Heights');
 ylabel('Distances');
 zlabel('E( \tau )');
 % set(gca, 'xscale', 'log');
-set(gca, 'yscale', 'log');
-set(gca, 'zscale', 'log');
+% set(gca, 'yscale', 'log');
+% set(gca, 'zscale', 'log');
+view(3);
+
+%%
+
+figure(4); hold on;
+plot(heights, meanEscapes(20,:));
+plot(heights, expEsc(20,:));
+hleg = legend('Computed','Approximation','Location','NW');
+title('Mean escapes compared with approximation');
+xlabel('Height');
+ylabel('E(\tau)');
 
 %% Chi-Square
 

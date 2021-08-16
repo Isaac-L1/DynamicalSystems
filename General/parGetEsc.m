@@ -54,14 +54,15 @@ function Exn = parGetEsc(func, x0, p0, kmax, thresh, alpha, h, nw)
          
         if any(w == 0) %If any workers are idle, assign realisations
             empty = (w==0);
-            ei = find(empty);
             for e = 1:sum(empty)
+                empty = (w==0);
+                ei = find(empty, 1);
                 if knext <= kmax %If there are realisations left assign.
-                    w(ei(e)) = knext;
-                    xn(N*(ei(e)-1)+1:N*ei(e)) = x0;
-                    tx(N*(ei(e)-1)+1:N*ei(e)) = 0;
+                    w(ei) = knext;
+                    xn(N*(ei-1)+1:N*ei) = x0;
+                    tx(N*(ei-1)+1:N*ei) = 0;
                     knext = knext + 1;
-                    xesc(N*(ei(e)-1)+1:N*ei(e)) = 0;
+                    xesc(N*(ei-1)+1:N*ei) = 0;
                 else %Otherwise remove worker from the stack.
                     nw = nw - 1;
                     for i = 1:length(p)
@@ -74,10 +75,10 @@ function Exn = parGetEsc(func, x0, p0, kmax, thresh, alpha, h, nw)
                             p{i} = sparse(pd{i});
                         end
                     end
-                    w(ei(e)) = [];
-                    xesc(N*(ei(e)-1)+1:N*ei(e)) = [];
-                    xn(N*(ei(e)-1)+1:N*ei(e)) = [];
-                    tx(N*(ei(e)-1)+1:N*ei(e)) = [];
+                    w(ei) = [];
+                    xesc(N*(ei-1)+1:N*ei) = [];
+                    xn(N*(ei-1)+1:N*ei) = [];
+                    tx(N*(ei-1)+1:N*ei) = [];
                     wN = 1:N*nw;
                     nums = randn(N*nw, 100000);
                     n = 1;
@@ -110,12 +111,16 @@ function Exn = parGetEsc(func, x0, p0, kmax, thresh, alpha, h, nw)
         %Find nodes that have escaped
         ind = (xn > thresh) & (xesc==0);
         xesc(ind) = 1;
-        Exn((mod(wN(ind), N) + 1), w(ceil(wN(ind)./N))) = tx(ind);
+        inds = wN(ind);
+        for indi = 1:sum(ind)
+            indn = inds(indi);
+            Exn((mod(indn+1, N)+1), (w(ceil(indn./N)))) = tx(indn);
+        end
         
         %If any whole systems have escaped then make that worker idle.
         xescr = reshape(xesc, [N nw]);
         escind = (~any(xescr == 0));
-        completed(w(escind)) = 1;
+        completed(w(escind == 1)) = 1;
         w(escind) = 0;
 
     end

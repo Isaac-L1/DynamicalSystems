@@ -1,7 +1,19 @@
+files = dir('*.csv');
+
+for i=1:length(files)
+    load(files(i).name, '-ascii');
+end
+
+%%
+
+
+
+%%
+
 % dn 0.005 betas [0.003 0.03 0.1 0.25 0.3 0.5]
 % dn 0.0001 betas [0.003 0.08 0.15 0.17 0.25 0.4]
 
-pl = tiledlayout(2,2);
+pl = tiledlayout(2,3);
 pln = 1;
 
 nu1 = 0.006;
@@ -13,7 +25,7 @@ sq2 = sqrt(nu2);
 EQ = [-sq1 -sq1 -sq1  sq1  sq1  sq1  1.0  1.0  1.0;
       -sq2  sq2  1.0 -sq2  sq2  1.0 -sq2  sq2  1.0];
 
-nexttile(pln); hold on;
+nexttile(1); hold on;
 for i = 1:9 % Run a continuation for each of the equilibrium points and plot on one figure.
 
     x0 = EQ(:,i);
@@ -32,14 +44,8 @@ for i = 1:9 % Run a continuation for each of the equilibrium points and plot on 
     coco_plot_bd(thm, 'test2d', 'beta', 'x'); %We continued beta so we need to plot beta against x
     grid on
 end
-plot(zeros(1,12)+0.003, -0.1:0.1:1, 'color', [0 0 0 0.5]);
-plot(zeros(1,12)+0.03, -0.1:0.1:1, 'color', [0 0 0 0.5]);
-plot(zeros(1,12)+0.1, -0.1:0.1:1, 'color', [0 0 0 0.5]);
-plot(zeros(1,12)+0.25, -0.1:0.1:1, 'color', [0 0 0 0.5]);
-plot(zeros(1,12)+0.3, -0.1:0.1:1, 'color', [0 0 0 0.5]);
 title(['Bifurcation Diagram for \delta \nu = ' num2str(deltanu)]);
 xlabel('\beta');
-pln = pln + 1;
 
 %%
 nu1 = 0.006;
@@ -51,7 +57,7 @@ sq2 = sqrt(nu2);
 EQ = [-sq1 -sq1 -sq1  sq1  sq1  sq1  1.0  1.0  1.0;
       -sq2  sq2  1.0 -sq2  sq2  1.0 -sq2  sq2  1.0];
 
-nexttile(pln); hold on;
+nexttile(4); hold on;
 for i = 1:9 % Run a continuation for each of the equilibrium points and plot on one figure.
 
     x0 = EQ(:,i);
@@ -70,22 +76,20 @@ for i = 1:9 % Run a continuation for each of the equilibrium points and plot on 
     coco_plot_bd(thm, 'test2d', 'beta', 'x'); %We continued beta so we need to plot beta against x
     grid on
 end
-plot(zeros(1,12)+0.003, -0.1:0.1:1, 'color', [0 0 0 0.5]);
-plot(zeros(1,12)+0.08, -0.1:0.1:1, 'color', [0 0 0 0.5]);
-plot(zeros(1,12)+0.15, -0.1:0.1:1, 'color', [0 0 0 0.5]);
-plot(zeros(1,12)+0.17, -0.1:0.1:1, 'color', [0 0 0 0.5]);
-plot(zeros(1,12)+0.25, -0.1:0.1:1, 'color', [0 0 0 0.5]);
-plot(zeros(1,12)+0.4, -0.1:0.1:1, 'color', [0 0 0 0.5]);
 title(['Bifurcation Diagram for \delta \nu = ' num2str(deltanu)]);
 xlabel('\beta');
-pln = pln + 1;
 
 %%
-load('simdata1.mat');
-EDS = zeros(2, 5);
-betas = [0.003 0.03 0.1 0.25 0.3];
+Exns = zeros(2,10000,40);
+Exns(1,:,:) = bifdiag1x;
+Exns(2,:,:) = bifdiag1y;
+EDS = zeros(2, 40);
+EDSX = zeros(2, 40);
+EDSY = zeros(2, 40);
+Probs = zeros(3, 40);
+betas = linspace(0,0.4,40);
 
-for j = 1:5
+for j = 1:40
     Exn = Exns(:,:,j);
 
     X1 = Exn(1,:);
@@ -134,23 +138,59 @@ for j = 1:5
     CEDY = SEDY./EEDY;
     
     EDS(:,j) = EED;
+    EDSX(:,j) = EEDX;
+    EDSY(:,j) = EEDY;
+    Probs(:,j) = [PX;PY;(1-PX-PY)];
 end
 
-nexttile(pln); hold on;
+nexttile(2); hold on;
 plot(betas, EDS(1,:));
 plot(betas, EDS(2,:));
 plot(0:0.1:0.4, zeros(1,5), 'k');
-title('Mean first and domino escape times for tested critical regions');
+legend('Node 1', 'Node 2','Location','NW');
+title('Mean first and domino escape times');
 xlabel('\beta');
 ylabel('E(\tau)');
-pln = pln + 1;
+
+% nexttile(2); hold on;
+% plot(betas, EDSX(1,:));
+% plot(betas, EDSX(2,:));
+% plot(0:0.1:0.4, zeros(1,5), 'k');
+% legend('Node 1', 'Node 2','Location','NW');
+% title('If node 1 escapes first');
+% xlabel('\beta');
+% ylabel('E(\tau)');
+% 
+% nexttile(3); hold on;
+% plot(betas, EDSY(1,:));
+% plot(betas, EDSY(2,:));
+% plot(0:0.1:0.4, zeros(1,5), 'k');
+% legend('Node 1', 'Node 2','Location','NW');
+% title('If node 2 escapes first');
+% xlabel('\beta');
+% ylabel('E(\tau)');
+
+nexttile(3); hold on;
+plot(betas, Probs(1,:));
+plot(betas, Probs(2,:));
+plot(betas, Probs(3,:));
+plot(0:0.1:0.4, zeros(1,5), 'k');
+legend('Node 1','Node 2','Inconclusive','Location','NW');
+title('Node Preference');
+xlabel('\beta');
+ylabel('P(X)');
 
 %%
-load('simdata12.mat');
-EDS = zeros(2, 20);
-betas = linspace(0,0.4,20);
+Exns = zeros(2,10000,40);
+Exns(1,:,:) = bifdiag2x;
+Exns(2,:,:) = bifdiag2y;
+EDS = zeros(2, 40);
+EDSX = zeros(2, 40);
+EDSY = zeros(2, 40);
+Probs = zeros(3, 40);
+betas = linspace(0,0.4,40);
 
-for j = 1:length(Exns)
+for j = 1:40
     Exn = Exns(:,:,j);
 
     X1 = Exn(1,:);
@@ -199,15 +239,47 @@ for j = 1:length(Exns)
     CEDY = SEDY./EEDY;
     
     EDS(:,j) = EED;
+    EDSX(:,j) = EEDX;
+    EDSY(:,j) = EEDY;
+    Probs(:,j) = [PX;PY;(1-PX-PY)];
 end
 
-nexttile(pln); hold on;
+nexttile(5); hold on;
 plot(betas, EDS(1,:));
 plot(betas, EDS(2,:));
 plot(0:0.1:0.4, zeros(1,5), 'k');
-title('Mean first and domino escape times for tested critical regions');
+legend('First', 'Domino','Location','NW');
+title('Mean first and domino escape times');
 xlabel('\beta');
 ylabel('E(\tau)');
+
+% nexttile(5); hold on;
+% plot(betas, EDSX(1,:));
+% plot(betas, EDSX(2,:));
+% plot(0:0.1:0.4, zeros(1,5), 'k');
+% legend('First', 'Domino','Location','NW');
+% title('If node 1 escapes first');
+% xlabel('\beta');
+% ylabel('E(\tau)');
+% 
+% nexttile(6); hold on;
+% plot(betas, EDSY(1,:));
+% plot(betas, EDSY(2,:));
+% plot(0:0.1:0.4, zeros(1,5), 'k');
+% legend('First', 'Domino','Location','NW');
+% title('If node 2 escapes first');
+% xlabel('\beta');
+% ylabel('E(\tau)');
+
+nexttile(6); hold on;
+plot(betas, Probs(1,:));
+plot(betas, Probs(2,:));
+plot(betas, Probs(3,:));
+plot(0:0.1:0.4, zeros(1,5), 'k');
+legend('Node 1','Node 2','Inconclusive','Location','NW');
+title('Node Preference');
+xlabel('\beta');
+ylabel('P(X)');
 %%
 
 function f = bistuni(x, p)

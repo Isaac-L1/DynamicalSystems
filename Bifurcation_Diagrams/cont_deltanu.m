@@ -1,6 +1,6 @@
 clear
 %% Equilibrium Guesses
-nu1 = 0.006;
+nu1 = 0.001;
 deltanu = 0.001;
 nu2 = nu1 + deltanu;
 sq1 = sqrt(nu1);
@@ -16,14 +16,14 @@ figure(3); clf; hold on;
 for i = 1:9 % Run a continuation for each of the equilibrium points and plot on one figure.
     
     x0 = EQ(:,i);
-    pnames = {'nu1', 'deltanu', 'beta'}; %Introduce parameters.
-    p0 = [nu1 deltanu 0]; %Initial conditions on the parameters.
+    pnames = {'nu1', 'deltanu', 'beta', 'prop'}; %Introduce parameters.
+    p0 = [nu1 deltanu 0 0.01]; %Initial conditions on the parameters.
 
     prob = coco_prob(); %Open a coco problem
     prob = coco_set(prob, 'ode', 'vectorized', false);
     prob = coco_set(prob, 'cont', 'PtMX', 1000, 'h_max', 0.01, 'h_min', 0.00001);
-    ode_args = {@bistuni, x0, pnames, p0};
-    cont_args = {1, 'beta', [0 1.35]}; %We want to continue beta and leave nu inactive
+    ode_args = {@bistsemi, x0, pnames, p0};
+    cont_args = {1, 'beta', [0 0.5]}; %We want to continue beta and leave nu inactive
 
     bd1 = coco(prob, 'test2d', @ode_isol2ep, ode_args{:}, cont_args{:}); %Run the continuation
 
@@ -38,15 +38,16 @@ for i = 1:9 % Run a continuation for each of the equilibrium points and plot on 
 end
 
 %% Continuation of the Saddle-Node bifurcation alond beta and nu
-% clf(2);
-x0 = EQ(:, 2); %Run where we get to the Saddle-Node bifurcation.
-pnames = {'nu1', 'deltanu', 'beta'};
-p0 = [nu1 deltanu 0];
+% clf(2); % USE 2 and 6
+x0 = EQ(:, 7); %Run where we get to the Saddle-Node bifurcation.
+pnames = {'nu1', 'deltanu', 'beta', 'prop'};
+p0 = [nu1 deltanu 0 0.02];
 
 prob = coco_prob(); %Start a new coco problem
 prob = coco_set(prob, 'ode', 'vectorized', false);
+prob = coco_set(prob, 'cont', 'PtMX', 1000, 'h_max', 0.01, 'h_min', 0.00001);
 %ode_fcns = {@bistuni};
-ode_args = {@bistuni, x0, pnames, p0};
+ode_args = {@bistsemi, x0, pnames, p0};
 cont_args = {1, 'beta', [0 0.35]};
 
 bd1 = coco(prob, 'test2d', @ode_isol2ep, ode_args{:}, cont_args{:}); %Run the continuation to find the Saddle-Node.
@@ -59,17 +60,18 @@ bd1 = coco(prob, 'test2d', @ode_isol2ep, ode_args{:}, cont_args{:}); %Run the co
 prob = coco_prob(); %Start a new coco problem
 labs = coco_bd_labs(bd1, 'SN'); %Find the saddle node
 prob = ode_SN2SN(prob, 'sn1', 'test2d', '', labs(1)); %Continue finding saddle nodes varying nu and beta
-bd2 = coco(prob, 'sn', [], 1, {'beta', 'deltanu'}, {[0 1], [-0.01 0.05]});
+bd2 = coco(prob, 'sn', [], 1, {'beta', 'prop'}, {[0 1], [0 1]});
 
 figure(2); hold on;%Plot the result
 thm = struct('special', {{'BP'}});
-coco_plot_bd(thm, 'sn', 'beta', 'deltanu');
+coco_plot_bd(thm, 'sn', 'beta', 'prop');
 grid on
 
 %% Continuation of equilibrium points for fixed beta
 
 figure(1); clf; hold on;
-for i = 1 % Run a continuation for each of the equilibrium points and plot on one figure.
+figure(3); clf; hold on;
+for i = [1 4 5 7 8 9] % Run a continuation for each of the equilibrium points and plot on one figure.
     
     x0 = EQ(:,i);
     pnames = {'nu1', 'deltanu', 'beta'}; %Introduce parameters.
@@ -82,16 +84,20 @@ for i = 1 % Run a continuation for each of the equilibrium points and plot on on
     cont_args = {1, 'deltanu', [-0.01 0.05]}; %We want to continue beta and leave nu inactive
 
     bd1 = coco(prob, 'test2d', @ode_isol2ep, ode_args{:}, cont_args{:}); %Run the continuation
-
+    
     figure(1);
     thm = struct('special', {{'SN'}});
-    coco_plot_bd(thm, 'test2d', 'x', 'deltanu'); %We continued beta so we need to plot beta against x
+    coco_plot_bd(thm, 'test2d', 'deltanu', 'x'); %We continued beta so we need to plot beta against x
+    grid on
+    
+    figure(3);
+    thm = struct('special', {{'SN'}});
+    coco_plot_bd(thm, 'test2d', 'deltanu', 'x', 2); %We continued beta so we need to plot beta against x
     grid on
 end
 
 %% Continuation of the Saddle-Node bifurcation alond beta and nu
-clf(2);
-x0 = EQ(:, 5); %Run where we get to the Saddle-Node bifurcation.
+x0 = EQ(:, 4); %Run where we get to the Saddle-Node bifurcation.
 pnames = {'nu1', 'deltanu', 'beta'};
 p0 = [nu1 deltanu 0.1];
 
@@ -110,7 +116,7 @@ bd1 = coco(prob, 'test2d', @ode_isol2ep, ode_args{:}, cont_args{:}); %Run the co
     
 prob = coco_prob(); %Start a new coco problem
 labs = coco_bd_labs(bd1, 'SN'); %Find the saddle node
-prob = ode_SN2SN(prob, 'sn1', 'test2d', '', labs(2)); %Continue finding saddle nodes varying nu and beta
+prob = ode_SN2SN(prob, 'sn1', 'test2d', '', labs(1)); %Continue finding saddle nodes varying nu and beta
 bd2 = coco(prob, 'sn', [], 1, {'beta', 'deltanu'}, {[0 0.35], [-0.01 0.05]});
 
 figure(2); hold on;%Plot the result
@@ -152,5 +158,18 @@ f = [(-(x1 - 1.0).*(x1.^2 - nu1) + beta.*(x2-x1));
 
 end
 
+function f = bistsemi(x, p)
 
+nu1 = p(1,:);
+nu2 = nu1 + p(2,:);
+beta1 = p(3,:);
+beta2 = beta1 * p(4,:);
+
+x1 = x(1,:);
+x2 = x(2,:);
+
+f = [(-(x1 - 1.0).*(x1.^2 - nu1) + beta1.*(x2-x1));
+    (-(x2 - 1.0).*(x2.^2 - nu2) + beta2.*(x1-x2))];
+
+end
 

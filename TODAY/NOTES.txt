@@ -3,15 +3,10 @@ NOTES
 -----
 
 Progress:
-- Reran the escape times height/distance
-    - Results that make more sense.
-    - Distance still has an effect.
-    - The effect is independent - chi-squared
-- Mathematica vector field
-    - Equilibria not as strange as we thought
-    - Doesn't cross a saddle but crosses a saddle manifold
-- Sims+eqs for dn=0.005 and dn=0.0001
-- Function to get coco to calculate the equilibrium points
+- Vector fields in MATLAB using quiver plot
+- Parallelisation code works again
+- Kramers stuff
+- Sims failed because of hibernation
 
 - Plot mean + domino escapes
 - indicate probability for each escape
@@ -20,3 +15,15 @@ Progress:
 - bifurcatoin diagram for delta nu
 - Check the regimes against simulation
 - delta nu bifurcations
+
+
+
+- Depends on ditance and height
+- Use kramers equation. (takes into account curvature)
+- Backward colgomorov equation (Chapman-Kolmogorov)
+- 
+
+- SIAM paper, kramers, I understand now. It's not a limiting solution. It's that Kramers becomes a better estimate as alpha becomes smaller.
+    alpha cannot however become arbitrarily small as the mean escape time is proportional to inverse square 
+
+- Don't understand Kolmogorov

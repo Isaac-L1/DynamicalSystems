@@ -9,30 +9,39 @@ kmax = 5000;
 thresh = 0.8;
 N = 2;
 h = 1e-3;
+nw = 64;
 nus = [0.006; 0.0061];
 x0 = -sqrt(nus);
 Exns1 = zeros(N, kmax, length(beta));
-
-parfor b = 1:length(beta)
-    betas = [0 beta(b); 0 0];
-    Exns1(:,:,b) = getEsc(N, nus, betas, h, alpha, x0, kmax, thresh);
-end
-
-beta = linspace(0,0.4,40);
-alpha = 0.03;
-kmax = 10000;
-thresh = 0.8;
-N = 2;
-h = 1e-3;
-nus = [0.006; 0.011];
-x0 = -sqrt(nus);
 Exns2 = zeros(N, kmax, length(beta));
 
-parfor b = 1:length(beta)
+for b = 1:length(beta)
     betas = [0 beta(b); 0 0];
-    Exns2(:,:,b) = getEsc(N, nus, betas, h, alpha, x0, kmax, thresh);
+    p0 = {nus, betas, sum(betas, 2)};
+    Exns1(:,:,b) = parGetEsc(@bistable, x0, p0, kmax, thresh, alpha, h, nw);
 end
+
+csvwrite('bifdiag1x.csv', reshape(Exns1(1, :,:), [kmax, length(beta)]));
+csvwrite('bifdiag1y.csv', reshape(Exns1(2, :,:), [kmax, length(beta)]));
+
+nus = [0.006; 0.011];
+x0 = -sqrt(nus);
+
+for b = 1:length(beta)
+    betas = [0 beta(b); 0 0];
+    p0 = {nus, betas, sum(betas, 2)};
+    Exns2(:,:,b) = parGetEsc(@bistable, x0, p0, kmax, thresh, alpha, h, nw);
+end
+
+csvwrite('bifdiag2x.csv', reshape(Exns2(1, :,:), [kmax, length(beta)]));
+csvwrite('bifdiag2y.csv', reshape(Exns2(2, :,:), [kmax, length(beta)]));
 
 while 1
     pause(1);
+end
+
+function f = bistable(x, p)
+
+f = -(x - 1).*(x.^2 - p{1}) + p{2}*x - p{3}.*x;
+
 end
